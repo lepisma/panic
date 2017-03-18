@@ -13,27 +13,33 @@ from collections import deque
 from docopt import docopt
 from sh import notify_send
 
-POLL_TIME = 2
+class Tracker:
 
-class MemoryState:
-
-    def __init__(self):
-        self.history = deque(maxlen=5)
+    def __init__(self, thresh, window_size=5, poll_time=2):
+        self.history = deque(maxlen=window_size)
         self.last = 0
+        self.hold = 0
+        self.thresh = thresh
+        self.window_size = window_size
+        self.poll_time = poll_time
 
-    def track(self, thresh):
+    def track(self):
         while True:
-            time.sleep(POLL_TIME)
+            time.sleep(self.poll_time)
             usage = self.usage
             self.history.append(usage - self.last)
             self.last = usage
 
-            if len([h for h in self.history if h > 1]) > 4:
-                self.notify()
-            elif usage > thresh:
-                self.notify()
+            if self.hold == 0:
+                if sum([h > 1 for h in self.history]) == self.window_size:
+                    self.notify()
+                elif usage > self.thresh:
+                    self.notify()
+            else:
+                self.hold -= 1
 
     def notify(self):
+        self.hold = self.window_size
         offender = self.offender
         notify_send(
             "Memory warning",
@@ -61,6 +67,4 @@ class MemoryState:
 def main():
     args = docopt(__doc__, argv=sys.argv[1:])
     thresh = int(args["--thresh"])
-
-    mem = MemoryState()
-    mem.track(thresh)
+    Tracker(thresh).track()
