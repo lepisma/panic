@@ -3,7 +3,7 @@ Usage: panic [--thresh=<thresh>]
 
 Options:
   -h --help              Show help
-  --thresh=<thresh>      Percent memory usage to watch over [default: 80]
+  --thresh=<thresh>      Percent memory usage to watch over [default: 90]
 """
 
 import time
