@@ -10,8 +10,10 @@ import time
 import psutil
 import sys
 from collections import deque
+from daemonize import Daemonize
 from docopt import docopt
 from sh import notify_send
+
 
 class Tracker:
 
@@ -64,7 +66,11 @@ class Tracker:
 
         return psutil.Process(max(pids, key=lambda p: _get_memory(p)))
 
+
 def main():
     args = docopt(__doc__, argv=sys.argv[1:])
     thresh = int(args["--thresh"])
-    Tracker(thresh).track()
+    tracker = Tracker(thresh)
+
+    pid = "/tmp/panic.pid"
+    Daemonize(app="panic", pid=pid, action=tracker.track).start()

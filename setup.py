@@ -8,13 +8,13 @@ project_url += "lepisma/panic"
 
 setup(
     name="panic",
-    version="0.1.0",
+    version="0.1.1",
     description="Notify (possible) memory leaks",
     long_description=readme,
     author="Abhinav Tushar",
     author_email="abhinav.tushar.vs@gmail.com",
     url=project_url,
-    install_requires=["docopt", "psutil", "sh"],
+    install_requires=["docopt", "psutil", "sh", "daemonize"],
     keywords="",
     packages=find_packages(),
     entry_points={
